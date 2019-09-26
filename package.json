@@ -1,0 +1,50 @@
+{
+  "name": "misc",
+  "version": "1.0.0",
+  "description": "Miscellaneous Items Recorded By Myself",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sunny-Kid/Misc"
+  },
+  "keywords": [
+    "misc"
+  ],
+  "scripts": {
+    "prettier": "prettier-eslint --write \"src/**/*.{js,jsx,ts,tsx}\""
+  },
+  "author": "Hank Ren",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-angular"
+    ]
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "yarn prettier",
+      "git add -A"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-angular": "^8.1.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0",
+    "husky": "^3.0.5",
+    "lint-staged": "^9.2.5",
+    "prettier": "^1.18.2",
+    "prettier-eslint-cli": "^5.0.0"
+  },
+  "sideEffects": false,
+  "dependencies": {}
+}
