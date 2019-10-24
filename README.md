@@ -1,3 +1,3 @@
 # Miscellaneous
 
-Miscellanuoues items
+Miscellaneous items
