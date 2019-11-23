@@ -22,7 +22,7 @@ function spawn(genF) {
       }
       if (next.done) return resolve(next.value);
       Promise.resolve(next.value).then(
-        (val) => step(function () { return gen.next(val) }),
+        (val) => step(function () { return gen.next(val) },
         (err) => step(function () { return gen.throw(err) })
       )
     }
