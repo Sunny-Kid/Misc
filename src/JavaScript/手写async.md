@@ -14,19 +14,18 @@ function fn(args){
 function spawn(genF) {
   return new Promise((resolve, reject) => {
     const gen = genF();
-    function step(fn) {
-      try {
-        var next = fn();
-      } catch(err) {
-        return reject(err);
+    try {
+      function step(next) {
+        if (next.done) return resolve(next.value);
+        Promise.resolve(next.value).then(
+          (val) => step(gen.next(val)),
+          (err) => step(gen.throw(err))
+        )
       }
-      if (next.done) return resolve(next.value);
-      Promise.resolve(next.value).then(
-        (val) => step(function () { return gen.next(val) },
-        (err) => step(function () { return gen.throw(err) })
-      )
+      step(gen.next());
+    } catch (err) {
+      return reject(err);
     }
-    step(() => gen.next(undefined));
   })
 }
 ```
