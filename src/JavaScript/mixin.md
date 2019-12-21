@@ -18,5 +18,17 @@ function mixin(...mixins) {
     // 拷贝原型属性
     copyProperties(Mix.prototype, mixin.prototype);
   }
+
+  return Mix;
+}
+
+const copyProperties = (target, source) => {
+  const keys = Reflect.ownKeys(source);
+  for (let key of keys) {
+    if (key !== "name" && key !== "constructor" && key !==  'prototype') {
+      const desc = Object.getOwnPropertyDescriptor(source, key);
+      Object.defineProperty(target, key, desc);
+    }
+  }
 }
 ```
