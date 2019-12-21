@@ -1,19 +1,21 @@
 function promisify(fn) {
   return function(options) {
     const options = options || {};
+    let _resolve, _reject;
     const promise = new Promise((resolve, reject) => {
-      const { success: optSuccess, fail: optFail } = options;
-      options.success = function success(res) {
-        typeof optSuccess === 'function' && optSuccess(res);
-        resolve(res);
-      };
-      options.fail = function success(res) {
-        typeof optFail === 'function' && optFail(res);
-        reject(res);
-      };
-    }).finally(() => {
-      fn(options);
+      _resolve = resolve;
+      _reject = reject;
     });
+    const { success: optSuccess, fail: optFail } = options;
+    options.success = function(res) {
+      typeof optSuccess === 'function' && optSuccess(res);
+      _resolve(res);
+    };
+    options.fail = function(reason) {
+      typeof optFail === 'function' && optFail(res);
+      _reject(reason);
+    };
+    fn(options);
     return promise;
   };
 }
