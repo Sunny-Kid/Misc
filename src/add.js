@@ -19,12 +19,12 @@ function add(...args1) {
 
 function curry(fn) {
   const length = fn.length;
-  const getCurried = params => () => {
+  const getCurried = (params = []) => () => {
     const args = params.concat([].slice.call(arguments));
     if (args.length < length) {
       getCurried(args);
     }
     return fn.apply(this, args);
   };
-  return getCurried([]);
+  return getCurried();
 }
