@@ -1,3 +1,7 @@
+function isObject(source) {
+  return Object.prototype.toString.call(source) === '[object Object]';
+}
+
 function deepClone(source, hash = new WeakMap()) {
   if (!isObject(source)) return source;
   if (hash.has(source)) return hash.get(source);
@@ -6,11 +10,7 @@ function deepClone(source, hash = new WeakMap()) {
   hash.set(source, target);
 
   Reflect.ownKeys(source).map(key => {
-    if (isObject(source[key])) {
-      target[key] = deepClone(source[key], hash);
-    } else {
-      target[key] = source[key];
-    }
+    target[key] = isObject(source[key]) ? deepClone(source[key], hash) : source[key];
   });
 
   return target;
