@@ -1,57 +1,37 @@
-function isObject(source) {
-  return Object.prototype.toString.call(source) === '[object Object]';
-}
-
-function deepClone(source, hash = new WeakMap()) {
-  if (!isObject(source)) return source;
-  if (hash.has(source)) return hash.get(source);
-
-  let target = Array.isArray(source) ? [] : {};
-  hash.set(source, target);
-
-  Reflect.ownKeys(source).map(key => {
-    target[key] = isObject(source[key]) ? deepClone(source[key], hash) : source[key];
-  });
-
-  return target;
-}
-
-Function.prototype.bind = function(context) {
-  if (typeof this !== 'function') {
-    throw new Error();
-  }
-
-  const self = this;
-  const args = [].slice.call(arguments, 1);
-
-  function fNOP() {}
-  function fBound() {
-    const bindArgs = [].slice.call(arguments);
-    return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
-  }
-  fNOP.prototype = this.prototype;
-  fBound.prototype = new fNOP();
-  return fBound;
+const checkType = obj => {
+  return Object.prototype.toString.call(obj).slice(8, -1);
 };
 
-function throttle(func, wait) {
-  let timer, last;
-  return function() {
-    const self = this;
-    const args = [].slice.call(arguments);
-    const now = new Date().getTime();
-    if (typeof last === 'undefined') {
-      last = now;
-      return func.apply(self, args);
+/**
+ * 深拷贝关注点：
+ * 1. 循环引用
+ * 2. 拷贝 Symbol 数据类型
+ * @param {any} source
+ * @param {WeakMap} hash
+ */
+
+const deepClone = (source, hash = new WeakMap()) => {
+  let target;
+  /** 增加 WeakMap 避免循环引用 */
+  if (hash.has(source)) return hash.get(source);
+  const sourceType = checkType(source);
+  if (sourceType === 'Array') {
+    target = [];
+  } else if (sourceType === 'Object') {
+    target = {};
+  } else {
+    return source;
+  }
+  hash.set(source, target);
+  /** 这里使用了 Reflect.ownKeys() 获取所有的键值，同时包括 Symbol */
+  Reflect.ownKeys(source).forEach(key => {
+    const value = source[key];
+    const valueType = checkType(value);
+    if (valueType === 'Array' || valueType === 'Object') {
+      target[key] = deepClone(value, hash);
+    } else {
+      target[key] = value;
     }
-    clearTimeout(timer);
-    if (now - last > wait) {
-      last = new Date().getTime();
-      return func.apply(self, args);
-    }
-    timer = setTimeout(function() {
-      last = new Date().getTime();
-      func.apply(self, args);
-    }, last + wait - now);
-  };
-}
+  });
+  return target;
+};
