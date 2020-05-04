@@ -42,7 +42,7 @@ function base64ToBlob(base64) {
   var base64String = '';
   var bytes = btoa(base64Arr[1]);
   const byteArray = new Uint8Array(new ArrayBuffer(bytes.length));
-  for (let i = 0;i < byteArray.length;i++) {
+  for (let i = 0; i < byteArray.length; i++) {
     byteArray[i] = bytes.charCodeAt(i);
   }
   return new Blob(byteArray, { type: imgtype });
