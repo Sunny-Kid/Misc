@@ -31,7 +31,7 @@ function spawn(genF) {
     try {
       function step(next) {
         if (next.done) return resolve(next.value);
-        Promise.resolve(next.value).then(val => step(gen.next(val)), err => step(gen.throw(err)))
+        Promise.resolve(next.value).then(val => step(gen.next(val)), err => step(gen.throw(err)));
       }
       step(gen.next());
     } catch (error) {
