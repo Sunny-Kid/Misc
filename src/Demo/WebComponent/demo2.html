@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+</style>
+<body>
+  <template id="my-paragraph">
+    <style>
+      p {
+        color: white;
+        background-color: #666;
+        padding: 5px;
+      }
+      p:host {
+        color: red;
+      }
+    </style>
+    <p><slot name="my-text">My default text</slot></p>
+  </template>
+  <my-paragraph>
+    <ul slot="my-text">
+      <li>Let's have some different text!</li>
+      <li>In a list!</li>
+    </ul>
+  </my-paragraph>
+  <p id="svg">
+    <svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">
+      <use xlink:href="#peopleicon-file-upload">
+        <svg id="peopleicon-file-upload" viewBox="0 0 1024 1024">
+          <path d="M666.10688 0c7.31648 0 14.33088 2.8928 19.51232 8.01792l220.09344 217.87136a27.63776 27.63776 0 0 1 8.20736 19.6608v723.0976c0 14.67904-5.8368 28.75904-16.24064 39.13728a55.48544 55.48544 0 0 1-39.20384 16.21504H165.5296C134.90688 1024 110.08 999.2192 110.08 968.64256V55.35744C110.08 24.7808 134.90688 0 165.52448 0h500.5824zM523.53536 389.12l-0.02048 0.0256h-17.93024c-5.53984 0-7.57248 0.58368-9.60512 1.64864-2.00192 1.07008-3.6352 2.7136-4.69504 4.72576-1.09056 2.03264-1.67936 4.03968-1.67936 9.6256l-0.0256 194.55488-194.53952 0.0256c-5.56032 0-7.59296 0.58368-9.6256 1.64864-2.00192 1.07008-3.64032 2.7136-4.70016 4.72576-1.09056 2.03264-1.67424 4.03456-1.67424 9.6v17.90464c0 5.56032 0.58368 7.56736 1.67424 9.6 1.05984 2.01216 2.69824 3.65568 4.70016 4.72576 2.03264 1.09056 4.03968 1.64864 9.6256 1.64864h194.59072v194.60608c0 5.53472 0.58368 7.56736 1.67936 9.6 1.05472 2.00704 2.69312 3.65568 4.69504 4.72576 2.03264 1.09056 4.06528 1.64864 9.6 1.64864h17.93024c5.53984 0 7.57248-0.5632 9.60512-1.64864 2.00192-1.07008 3.6352-2.7136 4.69504-4.72576 1.09056-2.03264 1.65376-4.03968 1.65376-9.6V649.5744h194.59072c5.56032 0 7.59296-0.55808 9.6256-1.64864 2.00192-1.07008 3.64032-2.7136 4.70016-4.72576 1.09056-2.03264 1.67424-4.03968 1.67424-9.6v-17.90464c0-5.53984-0.58368-7.56736-1.67424-9.6a11.38176 11.38176 0 0 0-4.70016-4.72576c-2.03264-1.06496-4.03968-1.64864-9.6256-1.64864l-194.56512-0.0512V405.12c0-5.53472-0.5888-7.56736-1.67936-9.6a11.38176 11.38176 0 0 0-4.69504-4.72576c-2.03264-1.06496-4.06528-1.67424-9.60512-1.67424z m154.79296-333.76256h-0.0256v152.2176c0 15.26784 12.42624 27.648 27.71968 27.648h152.45312l-180.1472-179.8656z" fill="#8F959E"></path>
+        </svg>
+      </use>
+    </svg>
+  </p>
+</body>
+<script type="text/javascript">
+  customElements.define('my-paragraph',
+    class extends HTMLElement {
+      constructor() {
+        super();
+        let template = document.getElementById('my-paragraph');
+        let templateContent = template.content;
+
+        const shadowRoot = this.attachShadow({mode: 'open'})
+          .appendChild(templateContent.cloneNode(true));
+    }
+  })
+</script>
+</html>

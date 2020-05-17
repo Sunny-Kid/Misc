@@ -116,6 +116,10 @@ export default class PromiseV2 {
     }
   }
 
+  catch(onRejected) {
+    return this.then(null, onRejected);
+  }
+
   static all(arr) {
     if (!Array.isArray(arr)) throw new Error('arguments must be a array');
     const res = [];
