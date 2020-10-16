@@ -12,20 +12,13 @@ function debounce(fn, wait = 50, immediate = false) {
 }
 
 function throttle(fn, wait) {
-  let previous = 0;
-  let timer = null;
+  let flag = true;
   return function(...args) {
-    const self = this;
-    const now = Date.now();
-    if (now - previous < wait) {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        previous = now;
-        fn.apply(self, args);
-      }, wait);
-    } else {
-      previous = now;
-      fn.apply(self, args);
-    }
+    if (!flag) return;
+    flag = false;
+    setTimeout(() => {
+      fn.apply(this, args);
+      flag = true;
+    }, wait);
   };
 }
