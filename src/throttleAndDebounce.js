@@ -22,3 +22,16 @@ function throttle(fn, wait) {
     }, wait);
   };
 }
+
+function before(n, fn) {
+  let result = null;
+  return function(...args) {
+    if (--n > 0) {
+      result = fn.apply(this, args);
+    }
+    if (n <= 1) {
+      fn = undefined;
+    }
+    return result;
+  };
+}
