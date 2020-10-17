@@ -24,7 +24,7 @@ var output = {
 function nested(obj) {
   function getNested(key) {
     const value = obj[key];
-    const lastIndex = key.lastIndexOf(value);
+    const lastIndex = key.lastIndexOf('.');
     if (lastIndex > -1) {
       delete obj[key];
       const mainKey = key.slice(0, lastIndex);
@@ -66,7 +66,7 @@ var output = {
 }
  */
 
-const utils = {
+var utils = {
   isObject(params) {
     return Object.prototype.toString.call(params) === '[object Object]';
   },
@@ -75,10 +75,10 @@ const utils = {
 function flatObj(obj, parentKey = '', result = {}) {
   Reflect.ownKeys(obj).map(key => {
     let keyName = `${parentKey}${key}`;
-    if (utils.isObject(obj(key))) {
+    if (utils.isObject(obj[key])) {
       flatObj(obj[key], keyName + '.', result);
     } else {
-      result[key] = obj[key];
+      result[keyName] = obj[key];
     }
   });
   return result;
