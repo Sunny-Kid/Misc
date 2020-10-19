@@ -3,141 +3,126 @@ const PENDING = 'PENDING';
 const FULFILLED = 'FULFILLED';
 const REJECTED = 'REJECTED';
 
-export default class PromiseV2 {
-  constructor(fn) {
-    this.state = PENDING;
+export default class Promise {
+  constructor(executor) {
+    this.status = PENDING;
     this.value = undefined;
-    this.resolveCbs = [];
-    this.rejectCbs = [];
+    this.reason = undefined;
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
+
+    const resolve = value => {
+      if (this.status === PENDING) {
+        this.status = FULFILLED;
+        this.value = value;
+        this.onFulfilledCallbacks.forEach(fn => {
+          fn(value);
+        });
+      }
+    };
+
+    const reject = reason => {
+      if (this.status === PENDING) {
+        this.status = REJECTED;
+        this.reason = reason;
+        this.onRejectedCallbacks.forEach(fn => {
+          fn(reason);
+        });
+      }
+    };
+
     try {
-      fn(this.resolve.bind(this), this.reject.bind(this));
+      executor(resolve, reject);
     } catch (error) {
-      this.reject.apply(this, error);
+      reject(error);
     }
   }
 
-  resolve(value) {
-    /** 考虑 resolve thenable 的情况 */
-    const self = this;
-    if (value instanceof PromiseV2) {
-      return value.then(self.resolve, self.reject);
-    }
-    setTimeout(() => {
-      if (this.state !== PENDING) return;
-      this.state = FULFILLED;
-      this.value = value;
-      this.resolveCbs.forEach(resolveCb => {
-        resolveCb(value);
-      });
-    });
-  }
-
-  reject(reason) {
-    setTimeout(() => {
-      if (this.state !== PENDING) return;
-      this.state = REJECTED;
-      this.value = reason;
-      this.rejectCbs.forEach(rejectCb => {
-        rejectCb(reason);
-      });
-    });
-  }
-
-  then(resolveFn, rejectFn) {
-    const self = this;
-    /** 考虑非函数情况下值的透传 */
-    resolveFn = typeof resolveFn === 'function' ? resolveFn : value => value;
-    rejectFn =
-      typeof rejectFn === 'function'
-        ? rejectFn
-        : e => {
-            throw e;
+  then(onFulfilled, onRejected) {
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : val => val;
+    onRejected =
+      typeof onRejected === 'function'
+        ? onRejected
+        : error => {
+            throw new Error(error);
           };
-    if (this.state === FULFILLED) {
-      return new PromiseV2((resolve, reject) => {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      if (self.status === FULFILLED) {
         setTimeout(() => {
-          try {
-            let x = resolveFn(self.value);
-            if (x instanceof PromiseV2) {
-              x.then(resolve);
-            } else {
-              resolve(x);
-            }
-          } catch (e) {
-            reject(e);
-          }
+          const result = onFulfilled(self.value);
+          return result instanceof Promise ? result.then(resolve, reject) : Promise.resolve(result);
         });
-      });
-    }
-    if (self.status === REJECTED) {
-      return new PromiseV2(function(resolve, reject) {
+      } else if (self.status === REJECTED) {
         setTimeout(() => {
+          const result = onRejected(self.reason);
+          return result instanceof Promise ? result.then(resolve, reject) : Promise.reject(result);
+        });
+      } else if (self.value === PENDING) {
+        self.onFulfilledCallbacks.push(() => {
           try {
-            let x = rejectFn(self.val);
-            if (x instanceof PromiseV2) {
-              x.then(resolve);
-            } else {
-              resolve(x);
-            }
-          } catch (e) {
-            reject(e);
+            setTimeout(() => {
+              const result = onFulfilled(self.value);
+              return result instanceof Promise ? result.then(resolve, reject) : Promise.resolve(result);
+            });
+          } catch (error) {
+            reject(error);
           }
         });
-      });
-    }
-    if (self.status === PENDING) {
-      return new PromiseV2((resolve, reject) => {
-        self.onResolvedCallback.push(value => {
+        self.onRejectedCallbacks.push(() => {
           try {
-            let x = resolveFn(value);
-            if (x instanceof PromiseV2) {
-              x.then(resolve);
-            } else {
-              resolve(x);
-            }
-          } catch (e) {
-            reject(e);
+            setTimeout(() => {
+              const result = onRejected(self.reason);
+              return result instanceof Promise ? result.then(resolve, reject) : Promise.reject(result);
+            });
+          } catch (error) {
+            reject(error);
           }
         });
-
-        self.onRejectedCallback.push(reason => {
-          try {
-            let x = rejectFn(reason);
-            if (x instanceof PromiseV2) {
-              x.then(resolve);
-            } else {
-              resolve(x);
-            }
-          } catch (e) {
-            reject(e);
-          }
-        });
-      });
-    }
+      }
+    });
   }
 
   catch(onRejected) {
     return this.then(null, onRejected);
   }
 
-  static all(arr) {
-    if (!Array.isArray(arr)) throw new Error('arguments must be a array');
-    const res = [];
-    let num = 0;
-    return new PromiseV2((resolve, reject) => {
-      arr.forEach(p => {
-        p.then(val => {
-          res.push(val);
-          if (++num === arr.length) resolve(res);
-        }).catch(err => reject(err));
-      });
+  static resolve(value) {
+    if (value instanceof Promise) {
+      return value;
+    } else {
+      return new Promise(resolve => resolve(value));
+    }
+  }
+
+  static reject(reason) {
+    return new Promise((_resolve, reject) => reject(reason));
+  }
+
+  static all(promiseList) {
+    const result = [];
+    let count = 0;
+    return new Promise((resolve, reject) => {
+      for (let promise of promiseList) {
+        Promise.resolve(promise).then(
+          val => {
+            count++;
+            result.push(val);
+            if (count === promiseList.length) {
+              resolve(result);
+            }
+          },
+          err => reject(err),
+        );
+      }
     });
   }
 
-  static race(arr) {
-    if (!Array.isArray(arr)) throw new Error('arguments must be a array');
-    return new PromiseV2((resolve, reject) => {
-      arr.forEach(p => p.then(resolve, reject));
+  static race(promiseList) {
+    return new Promise((resolve, reject) => {
+      for (let promise of promiseList) {
+        Promise.resolve(promise).then(val => resolve(val), err => reject(err));
+      }
     });
   }
 }
