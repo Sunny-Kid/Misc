@@ -51,19 +51,19 @@ export default class Promise {
       if (self.status === FULFILLED) {
         setTimeout(() => {
           const result = onFulfilled(self.value);
-          return result instanceof Promise ? result.then(resolve, reject) : Promise.resolve(result);
+          return result instanceof Promise ? result.then(resolve, reject) : resolve(result);
         });
       } else if (self.status === REJECTED) {
         setTimeout(() => {
           const result = onRejected(self.reason);
-          return result instanceof Promise ? result.then(resolve, reject) : Promise.reject(result);
+          return result instanceof Promise ? result.then(resolve, reject) : reject(result);
         });
       } else if (self.value === PENDING) {
         self.onFulfilledCallbacks.push(() => {
           try {
             setTimeout(() => {
               const result = onFulfilled(self.value);
-              return result instanceof Promise ? result.then(resolve, reject) : Promise.resolve(result);
+              return result instanceof Promise ? result.then(resolve, reject) : resolve(result);
             });
           } catch (error) {
             reject(error);
@@ -73,7 +73,7 @@ export default class Promise {
           try {
             setTimeout(() => {
               const result = onRejected(self.reason);
-              return result instanceof Promise ? result.then(resolve, reject) : Promise.reject(result);
+              return result instanceof Promise ? result.then(resolve, reject) : reject(result);
             });
           } catch (error) {
             reject(error);
