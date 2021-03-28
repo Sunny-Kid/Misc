@@ -56,6 +56,7 @@ const List2Tree = list => {
   const ListMap = list.reduce((prev, curr) => {
     const { id } = curr;
     prev[id] = curr;
+    return prev;
   }, {});
   for (let item of list) {
     const { parentId } = item;
