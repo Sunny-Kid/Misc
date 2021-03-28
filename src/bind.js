@@ -35,7 +35,7 @@ Function.prototype.bind = function(context, ...presetArgs) {
 
   const self = this;
   return function F(...restArgs) {
-    // 考虑绑定函数作为构造函数被 new 操作符调用
+    // 考虑 bind 返回的函数作为构造函数执行, this 指向实例
     if (this instanceof F) {
       return new self(...presetArgs, ...restArgs);
     }
