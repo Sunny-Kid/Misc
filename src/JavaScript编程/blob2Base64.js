@@ -26,3 +26,26 @@ function base64ToBlob(base64) {
   // 生成Blob对象（文件对象）
   return new Blob([...byteArray]);
 }
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(blob);
+    fileReader.onload = () => {
+      resolve(reader.result);
+    };
+    fileReader.onerror = error => {
+      reject(error);
+    };
+  });
+}
+
+function base64ToBlob(base64) {
+  const byteString = atob(base64);
+  const bytesCode = new ArrayBuffer(byteString.length * 2);
+  const byteArray = new Uint32Array(bytesCode);
+  for (var i = 0; i < byteArray.length; i++) {
+    byteArray[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([...byteArray]);
+}

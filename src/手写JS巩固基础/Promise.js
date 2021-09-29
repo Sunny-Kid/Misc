@@ -118,6 +118,31 @@ export default class Promise {
     });
   }
 
+  static allSettled(promiseList) {
+    const result = [];
+    let count = 0;
+    return new Promise((resolve, reject) => {
+      for (let promise of promiseList) {
+        Promise.resolve(promise).then(
+          val => {
+            count++;
+            result.push(val);
+            if (count === result.length) {
+              resolve(result);
+            }
+          },
+          err => {
+            count++;
+            result.push(err);
+            if (count === result.length) {
+              resolve(result);
+            }
+          },
+        );
+      }
+    });
+  }
+
   static race(promiseList) {
     return new Promise((resolve, reject) => {
       for (let promise of promiseList) {

@@ -1,7 +1,7 @@
 window.onload = function() {
   countDown();
   function addZero(i) {
-    return i < 10 ? '0' + i : i + '';
+    return String(i).padStart(2, '0');
   }
   function countDown() {
     const nowtime = new Date();

@@ -12,4 +12,10 @@ const compose = (...args) => {
   };
 };
 
+const compose = (...presetArgs) => {
+  return function(...restArgs) {
+    presetArgs.reduceRight((accu, cb) => cb(...accu), restArgs);
+  };
+};
+
 export default compose;

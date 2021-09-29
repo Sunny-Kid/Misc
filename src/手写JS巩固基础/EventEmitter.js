@@ -4,19 +4,12 @@ class EventEmitter {
   }
 
   on(eventName, cb) {
-    if (!this.listeners[eventName]) {
-      this.listeners[eventName] = [cb];
-    } else {
-      this.listeners[eventName].push(cb);
-    }
+    this.listeners[eventName] ??= [];
+    this.listeners[eventName].push(cb);
   }
 
   once(eventName, cb) {
-    if (!this.listeners[eventName]) {
-      this.listeners[eventName] = [cb];
-    } else {
-      this.listeners[eventName].push(cb);
-    }
+    this.on(eventName, cb);
     // 使用一个标记来标明这是一个一次性的事件回调
     this.listeners[eventName].once = true;
   }
