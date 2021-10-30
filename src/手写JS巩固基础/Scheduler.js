@@ -1,4 +1,4 @@
-// Promise 并行限制
+// 控制 Promise 并发次数
 class Scheduler {
   constructor() {
     this.maxCount = 2;
