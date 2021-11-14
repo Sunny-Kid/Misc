@@ -1,4 +1,4 @@
-// 手机号3-3-4分割
+// 手机号3-4-4分割
 const splitMobilePhone = phoneNum => {
   return phoneNum.replace(/(?=(\d{4})+$)/g, '-');
 };

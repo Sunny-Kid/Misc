@@ -22,25 +22,26 @@ var output = {
  */
 
 function nested(obj) {
+  const result = {};
   function getNested(key) {
-    const value = obj[key];
+    const value = obj[key] || result[key];
     const lastIndex = key.lastIndexOf('.');
     if (lastIndex > -1) {
-      delete obj[key];
+      delete result[key];
       const mainKey = key.slice(0, lastIndex);
       const subKey = key.slice(lastIndex + 1);
-      if (obj[mainKey]) {
-        obj[mainKey][subKey] = value;
+      if (result[mainKey]) {
+        result[mainKey][subKey] = value;
       } else {
-        obj[mainKey] = { [subKey]: value };
+        result[mainKey] = { [subKey]: value };
       }
-      if (/\./.test(mainKey)) {
+      if (/./.test(mainKey)) {
         getNested(mainKey);
       }
     }
   }
-  Reflect.ownKeys(obj).map(key => getNested(key));
-  return obj;
+  Object.keys(obj).map(getNested);
+  return result;
 }
 
 /**
