@@ -12,9 +12,14 @@ const compose = (...args) => {
   };
 };
 
-const compose = (...presetArgs) => {
-  return function(...restArgs) {
-    presetArgs.reduceRight((accu, cb) => cb(...accu), restArgs);
+const compose = (...fns) => {
+  if (fns.length === 0) return num => num;
+  const nonFunction = fns.find(fn => typeof fn !== 'function');
+  if (nonFunction) {
+    throw new TypeError(`${nonFunction} is not a function !`);
+  }
+  return function(...args) {
+    return fns.reduceRight((params, fn) => (args === params ? fn(...params) : fn(params)), args);
   };
 };
 

@@ -20,3 +20,14 @@ Function.prototype.bind = function(context, ...presetArgs) {
     return self.apply(context, [...presetArgs, ...restArgs]);
   };
 };
+
+Function.prototype.bind = function(context, ...presetArgs) {
+  context = typeof context === 'object' ? context : window;
+  const self = this;
+  return function F(...restArgs) {
+    if (this instanceof F) {
+      return new self(...presetArgs, ...restArgs);
+    }
+    return self.apply(context, [...presetArgs, ...restArgs]);
+  };
+};

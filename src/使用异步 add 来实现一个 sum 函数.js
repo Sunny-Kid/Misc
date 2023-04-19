@@ -10,7 +10,7 @@ function add(a, b) {
 // 串行
 function sum(arr) {
   if (arr.length === 1) return arr[0];
-  return sum.reduce((a, b) => Promise.resolve(a).then(a => a + b));
+  return arr.reduce((a, b) => Promise.resolve(a).then(a => add(a, b)));
 }
 
 // 并行
@@ -69,6 +69,48 @@ async function sum(arr, concurrency) {
   if (arr.length === 1) return arr[0];
   const scheduler = new Scheduler(concurrency);
   const promiseList = chunk(arr, 2).map(([a, b]) => (b === undefined ? Promise.resolve(a) : add(a, b)));
+  promiseList.map(promise => scheduler.add(promise));
+  return scheduler.taskStart();
+}
+
+class Scheduler {
+  constructor(concurrency) {
+    this.maxCount = concurrency;
+    this.runCount = 0;
+    this.taskList = [];
+    this.result = [];
+  }
+
+  add(promise) {
+    this.taskList.push(promise);
+  }
+
+  run() {
+    if (!this.taskList.length || this.runCount >= this.maxCount) {
+      return;
+    }
+    this.runCount++;
+    this.taskList
+      .shift()()
+      .then(value => {
+        this.runCount--;
+        this.result.push(value);
+        this.run();
+      });
+  }
+
+  taskStart() {
+    for (let i = 0; i < this.taskList.length; i++) {
+      this.run();
+    }
+    return Promise.resolve(this.result);
+  }
+}
+
+function sum(arr, concurrency) {
+  if (arr.length === 1) return arr[0];
+  const promiseList = chunk(arr, 2).map(([a, b]) => (b === undefined ? Promise.resolve(b) : add(a, b)));
+  const scheduler = new Scheduler(concurrency);
   promiseList.map(promise => scheduler.add(promise));
   return scheduler.taskStart();
 }

@@ -3,10 +3,10 @@ const array2list = function(arr) {
     value: arr[0],
     next: null,
   };
-  let pnode = head;
-  for (const item of arr) {
+  const pnode = head;
+  for (let i = 1; i < arr.length; i++) {
     const node = {
-      value: item,
+      value: arr[i],
       next: null,
     };
     pnode.next = node;

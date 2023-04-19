@@ -28,3 +28,32 @@ class EventEmitter {
     }
   }
 }
+
+class EventEmitter {
+  constructor() {
+    this.listeners = {};
+  }
+
+  on(eventName, cb) {
+    this.listeners[eventName] ??= [];
+    this.listeners[eventName].push(cb);
+  }
+
+  once(eventName, cb) {
+    this.on(eventName, cb);
+    this.listeners[eventName].once = true;
+  }
+
+  off(eventName) {
+    this.listeners[eventName] = null;
+  }
+
+  emit(eventName, ...args) {
+    this.listeners[eventName].forEach(fn => {
+      if (fn) {
+        fn.apply(this, args);
+      }
+      if (this.listeners[eventName].once) this.off(eventName);
+    });
+  }
+}

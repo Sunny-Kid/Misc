@@ -24,3 +24,24 @@ function spawn(genF) {
     }
   });
 }
+
+function spawn(genF) {
+  return new Promise((resolve, reject) => {
+    const gen = genF();
+    try {
+      function step(next) {
+        if (next.done) resolve(next.value);
+        return Promise.resolve(next.value)
+          .then(val => {
+            return step(gen.next(val));
+          })
+          .catch(err => {
+            return step(gen.throw(err));
+          });
+      }
+      step(gen.next());
+    } catch (error) {
+      reject(error);
+    }
+  });
+}

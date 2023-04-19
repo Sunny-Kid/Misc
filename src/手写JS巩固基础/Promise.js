@@ -103,17 +103,16 @@ export default class Promise {
     const result = [];
     let count = 0;
     return new Promise((resolve, reject) => {
-      for (let promise of promiseList) {
-        Promise.resolve(promise).then(
+      for (let i = 0;i < promiseList.length;i++) {
+        Promise.resolve(promiseList[i]).then(
           val => {
+            result[i] = val;
             count++;
-            result.push(val);
             if (count === promiseList.length) {
               resolve(result);
             }
-          },
-          err => reject(err),
-        );
+          }
+        ).catch(err => reject(err));
       }
     });
   }
@@ -122,25 +121,23 @@ export default class Promise {
     const result = [];
     let count = 0;
     return new Promise((resolve, reject) => {
-      for (let promise of promiseList) {
-        Promise.resolve(promise).then(
+      for (let i = 0;i < promiseList.length;i++) {
+        Promise.resolve(promiseList[i]).then(
           val => {
+            result[i] = val;
             count++;
-            result.push(val);
             if (count === result.length) {
               resolve(result);
             }
-          },
-          err => {
+          }
+        ).catch((err) => {
+            result[i] = err;
             count++;
-            result.push(err);
             if (count === result.length) {
               resolve(result);
             }
-          },
-        );
-      }
-    });
+        });
+      };
   }
 
   static race(promiseList) {

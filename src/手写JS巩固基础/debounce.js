@@ -1,6 +1,6 @@
 function debounce(fn, wait = 50, immediate = false) {
   let timer = null;
-  return function(args) {
+  return function(...args) {
     if (timer) {
       clearTimeout(timer);
     }
@@ -8,7 +8,7 @@ function debounce(fn, wait = 50, immediate = false) {
       fn.apply(this, args);
     }
     timer = setTimeout(() => {
-      fn.apply(this, ...args);
+      fn.apply(this, args);
     }, wait);
   };
 }

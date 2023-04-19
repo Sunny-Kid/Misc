@@ -22,4 +22,21 @@ function loop() {
   }
 }
 
+function loop() {
+  if (countOfRender < loopCount) {
+    window.requestAnimationFrame(add);
+  }
+}
+
+function add() {
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < once; i++) {
+    const li = document.createElement('li');
+    li.innerText = Math.floor(Math.random() * total);
+    fragment.appendChild(li);
+  }
+  ul.appendChild(fragment);
+  countOfRender++;
+}
+
 loop();
