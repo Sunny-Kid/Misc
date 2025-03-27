@@ -6,7 +6,7 @@ function MySymbol(obj) {
   return uuid;
 }
 
-Function.prototype.bind = function(context, ...presetArgs) {
+Function.prototype.bind = function (context, ...presetArgs) {
   if (typeof this !== 'function') {
     throw new Error();
   }
@@ -21,7 +21,7 @@ Function.prototype.bind = function(context, ...presetArgs) {
   };
 };
 
-Function.prototype.bind = function(context, ...presetArgs) {
+Function.prototype.bind = function (context, ...presetArgs) {
   context = typeof context === 'object' ? context : window;
   const self = this;
   return function F(...restArgs) {

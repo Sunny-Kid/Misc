@@ -1,4 +1,4 @@
-Function.prototype.apply = function(context = window, args) {
+Function.prototype.apply = function (context = window, args) {
   if (typeof this !== 'function') {
     throw new TypeError('args must be function');
   }
@@ -10,7 +10,7 @@ Function.prototype.apply = function(context = window, args) {
   return res;
 };
 
-Function.prototype.apply = function(context = window, args) {
+Function.prototype.apply = function (context = window, args) {
   context = typeof context === 'object' ? context : window;
   const symbol = Symbol('fn');
   context[symbol] = this;

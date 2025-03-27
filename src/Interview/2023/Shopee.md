@@ -32,11 +32,12 @@ prototype是另一个对象，__proto__是指向prototype的指针属性。proto
 :not 和 :is 伪类不会算在权重计算，但子元素会
 
 6. eval 缺点
-- 不安全，字符串代码被恶意篡改，最终会在扩展程序权限下，在用户计算机上运行恶意代码
+- 不安全，字符串代码被恶意篡改，会引起 XSS 攻击，最终会在扩展程序权限下，在用户计算机上运行恶意代码
+- 不易调试，用chromeDev等调试工具无法打断点
 - 性能问题，JavaScript 解释器会将 javascript 转换为机器代码，eval的使用都会强制浏览器进行变量名称查找，以确定变量在机器代码中的位置并设置其值
 
 7. Redux 数据流
-状态及页面逻辑从 里面抽取出来, 成为独立的 store, 页面逻辑就是 reducer
+状态及页面逻辑从 里面抽取出来, 成为独立的 store, 页面逻辑就是 reducer（纯函数，执行修改 state）
 及都是 Pure Component, 通过 connect 方法可以很方便地给它俩加一层 wrapper 从而建立起与 store 的联系: 可以通过 dispatch 向 store 注入 action, 促使 store 的状态进行变化, 同时又订阅了 store 的状态变化, 一旦状态变化, 被 connect 的组件也随之刷新
 使用 dispatch 往 store 发送 action 的这个过程是可以被拦截的, 自然而然地就可以在这里增加各种 Middleware, 实现各种自定义功能, eg: logging
 
@@ -50,6 +51,7 @@ ps：super 关键字指代父类的实例，即父类的 this 对象。在子类
 f1(‘abc’, 123, { b: 3 });    // 返回值5， 耗时100s
 f1(‘abc’, 123, { b: 3 });    // 返回值5， 耗时100s
 
+// 相同参数返回相同结果
 function cache(f) {
   // …...TODO 
 }
@@ -66,7 +68,6 @@ f2(‘abc’, 123, { b: 3 });    // 返回5， 耗时0s
   SDK 运行时对于阻碍流程的 try catch 然后手动上报，自身错误通过服务端根据 SDK CDN 域名后缀进行清洗，分流到 SLARDAR_SDK，这里通过 isHitSampleByRate 函数来设置采样率，因为用一个错误又一个应用会发生，那就代表用了同样版本号的应用也会有，所以设置了 0.001 的采样率来限制上报次数
 
 4. 微前端的场景下 SDK 如何区分子应用和父应用？
-https://bytedance.feishu.cn/wiki/wikcn39zeMNjw43dGt5R7Se6tQe#
 对于 XMLHttpRequest、 fetch 等 override，以便隔离个子应用的网络请求
 
 获取并存储子应用的所有资源，代理子应用的监听错误函数，在触发错误时判断错误的来源是否为当前子应用，若为当前子应用的资源触发监听错误事件，不为忽略
@@ -134,3 +135,6 @@ terser-webpack-plugin 开启缓存
 - 从入口文件（entry）开始解析，并且找到其导入的依赖模块，递归遍历分析，形成依赖关系树；
 - 对不同文件类型的依赖模块文件使用对应的Loader进行编译，最终转为Javascript文件；
 - 整个过程中webpack会通过发布订阅模式，向外抛出一些hooks，而webpack的插件即可通过监听这些关键的事件节点，执行插件任务进而达到干预输出结果的目的。
+
+12. navigator.sendBeacon 为什么采用这种方式进行页面 unload 的时候进行上报？
+- sendBeacon 将异步和非阻塞请求发送到服务器，不阻塞页面卸载或影响下一跳的性能，不受跨域限制

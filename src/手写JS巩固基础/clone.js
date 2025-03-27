@@ -19,7 +19,7 @@ const deepCopy = (source, map = new WeakMap()) => {
   if (map.has(source)) return map.get(source);
   let target = Array.isArray(source) ? [] : {};
   map.set(source, target);
-  for (let key in target) {
+  for (let key in source) {
     if (source.hasOwnProperty(key)) {
       if (!(key in target)) {
         if (source[key] instanceof Date) {
@@ -41,7 +41,7 @@ const deepCopy = (source, map = new WeakMap()) => {
   if (map.has(source)) return map.get(source);
   const target = Array.isArray(source) ? [] : {};
   map.set(source, target);
-  for (let key in target) {
+  for (let key in source) {
     if (source.hasOwnProperty(key)) {
       if (!key in target) {
         if (source[key] instanceof Date) {

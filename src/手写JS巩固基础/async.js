@@ -5,7 +5,7 @@ async function fn(args) {
 // 等同于
 
 function fn(args) {
-  return spawn(function*() {
+  return spawn(function* () {
     // ...
   });
 }

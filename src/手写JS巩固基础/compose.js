@@ -18,7 +18,7 @@ const compose = (...fns) => {
   if (nonFunction) {
     throw new TypeError(`${nonFunction} is not a function !`);
   }
-  return function(...args) {
+  return function (...args) {
     return fns.reduceRight((params, fn) => (args === params ? fn(...params) : fn(params)), args);
   };
 };

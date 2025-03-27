@@ -1,4 +1,4 @@
-const array2list = function(arr) {
+const array2list = function (arr) {
   const head = {
     value: arr[0],
     next: null,
@@ -15,7 +15,7 @@ const array2list = function(arr) {
   return head;
 };
 
-const list2array = function(list) {
+const list2array = function (list) {
   const res = [];
   let node = list;
   while (node) {

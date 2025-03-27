@@ -7,7 +7,7 @@ splitMobilePhone('13387645444');
 
 // 千分位格式化数字
 const formatPrice = number => {
-  return String(number).replace(/\B(?=(\d{3})+$)/g, ',');
+  return String(number).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 formatPrice(123123123);

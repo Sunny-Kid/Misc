@@ -118,6 +118,27 @@ export default class Promise {
   }
 
   static allSettled(promiseList) {
+    // const result = [];
+    // let count = 0;
+    // return new Promise((resolve, reject) => {
+    //   for (let i = 0;i < promiseList.length;i++) {
+    //     Promise.resolve(promiseList[i]).then(
+    //       val => {
+    //         result[i] = val;
+    //         count++;
+    //         if (count === result.length) {
+    //           resolve(result);
+    //         }
+    //       }
+    //     ).catch((err) => {
+    //         result[i] = err;
+    //         count++;
+    //         if (count === result.length) {
+    //           resolve(result);
+    //         }
+    //     });
+    //   };
+    // });
     const result = [];
     let count = 0;
     return new Promise((resolve, reject) => {
@@ -130,14 +151,9 @@ export default class Promise {
               resolve(result);
             }
           }
-        ).catch((err) => {
-            result[i] = err;
-            count++;
-            if (count === result.length) {
-              resolve(result);
-            }
-        });
-      };
+        )
+      }
+    })
   }
 
   static race(promiseList) {
