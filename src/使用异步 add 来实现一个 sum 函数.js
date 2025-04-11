@@ -114,3 +114,25 @@ function sum(arr, concurrency) {
   promiseList.map(promise => scheduler.add(promise));
   return scheduler.taskStart();
 }
+
+class Singleton {
+  constructor() {
+    if (!Singleton.instance) {
+      this.data = [];
+      Singleton.instance = this;
+    }
+  }
+
+  addItem(item) {
+    this.data.push(item);
+  }
+
+  getItem(index) {
+    return this.data[index];
+  }
+
+  getData() {
+    return this.data;
+  }
+}
+
