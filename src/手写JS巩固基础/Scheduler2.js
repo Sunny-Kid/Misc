@@ -11,12 +11,14 @@ class Scheduler {
     return new Promise((resolve, reject) => {
       const execute = () => {
         this.running++;
-        task().then(resolve, reject).finally(() => {
-          this.running--;
-          if (this.queue.length) {
+        task()
+          .then(resolve, reject)
+          .finally(() => {
+            this.running--;
+            if (this.queue.length) {
               this.queue.shift()();
-          }
-        });
+            }
+          });
       };
       if (this.running < this.limit) {
         execute();
@@ -28,16 +30,13 @@ class Scheduler {
 }
 
 function test() {
-const generatePromise = (time, data) => new Promise(resolve => setTimeout(resolve, time, data));
-const scheduler = new Scheduler();
+  const generatePromise = (time, data) => new Promise(resolve => setTimeout(resolve, time, data));
+  const scheduler = new Scheduler();
 
-scheduler.run(() => generatePromise(400, 4)).then(data => console.log(data));
-scheduler.run(() => generatePromise(200, 2)).then(data => console.log(data));
-scheduler.run(() => generatePromise(400, 3)).then(data => console.log(data));
-scheduler.run(() => generatePromise(100, 1)).then(data => console.log(data));
+  scheduler.run(() => generatePromise(400, 4)).then(data => console.log(data));
+  scheduler.run(() => generatePromise(200, 2)).then(data => console.log(data));
+  scheduler.run(() => generatePromise(400, 3)).then(data => console.log(data));
+  scheduler.run(() => generatePromise(100, 1)).then(data => console.log(data));
 }
 
 test(); // 打印结果: 2 4 1 3
-
-
-

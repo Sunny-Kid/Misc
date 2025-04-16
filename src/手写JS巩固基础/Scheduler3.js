@@ -8,31 +8,34 @@ class Scheduler {
   }
 
   add(task) {
-    return new Promise((resolve,reject) => { 
+    return new Promise((resolve, reject) => {
       this.tasks.push({
         task,
         resolve,
-        reject
+        reject,
       });
       this.run();
-    })
+    });
   }
 
   run() {
-    if (this.tasks.length && this.runningCount < this.parallelCount) { 
+    if (this.tasks.length && this.runningCount < this.parallelCount) {
       this.runningCount++;
-      const { task,resolve,reject } = this.tasks.shift();
-      task().then(resolve,reject).finally(res => {
-        this.runningCount--; 
-        this.run();
-      })
+      const { task, resolve, reject } = this.tasks.shift();
+      task()
+        .then(resolve, reject)
+        .finally(res => {
+          this.runningCount--;
+          this.run();
+        });
     }
   }
 }
 
-const timeout = time => new Promise(resolve => {
-  setTimeout(resolve, time);
-});
+const timeout = time =>
+  new Promise(resolve => {
+    setTimeout(resolve, time);
+  });
 
 const scheduler = new Scheduler(2);
 
